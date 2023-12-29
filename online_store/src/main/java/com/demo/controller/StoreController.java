@@ -54,10 +54,7 @@ public class StoreController {
 		return storeService.getStoreById(id);
 	}
 	
-//	@PostMapping("assign/{sid}/{pid}")
-//	String assignProductToStore(@PathVariable int pid, @PathVariable int sid) {
-//		return storeService.assignProductToStore(pid, sid);
-//	}
+ 
 	
 	@DeleteMapping("/deleteStore/{id}")
 	String deleteStore(@PathVariable int id) {

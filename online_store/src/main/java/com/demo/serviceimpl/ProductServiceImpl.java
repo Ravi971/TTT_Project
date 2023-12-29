@@ -136,20 +136,26 @@ public class ProductServiceImpl implements ProductService {
 	
 	  @Override
 	    public String cancelorder(int orderId)  {
-	       
+	       //  Check if the order is older than 7 days.
 	        OrderDetails order = orderRepository.findById(orderId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
-	        
+		    
 	        LocalDate orderDate = order.getOrderDate();
 	        LocalDate currentDate = LocalDate.now();
-	       
+		long daysBetween = ChronoUnit.DAYS.between(orderDate, currentDate);
+
+		     if (daysBetween >= 7) {
+	            throw new OrderCancellationException("Order cannot be canceled after 7 days.");
+	        }
+		    
+	        // 2. After canceling, increase the stock.
 	        List<Product> products = order.getProducts();
 	        for (Product product : products) {
 	            product.setStock(product.getStock() + order.getQuantity());
 	            productRepository.save(product);
 	        }
 
-	        
+	         // 3. Now, you can safely cancel the order.
 	        orderRepository.delete(order);
 
 	        return "Order canceled successfully.";
